@@ -3,14 +3,14 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
-	<script type="text/javascript" src="front.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
-	<script>
+	<script type='text/javascript'>
+		alert("h");
 		var socket = io.connect('http://192.168.1.221');
 		socket.on('news', function (data) {
-			console.log(data);
+			alert(data);
 			socket.emit('my other event', { my: 'data' });
-		});
+		};
 	</script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
