@@ -16,6 +16,9 @@ function onRequest(request, response) {
 }
 
 io.sockets.on('connection', function (socket) {
-	//send out this message when a client connects
-	socket.emit('message', {hello: 'world'});
+	//when a client connects
+	socket.on('clientMessage', function (clientData) {
+		//emit the message back to the client
+		socket.emit('serverMessage', {data: clientData.data});
+	});
 });
