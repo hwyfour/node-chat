@@ -2,6 +2,7 @@ var app		= require('http').createServer(onRequest);
 var io		= require('socket.io').listen(app);
 var nostat	= require('node-static');
 var file	= new nostat.Server('./files', { cache: 0 });
+var clients = [];
 
 app.listen(80);
 
@@ -17,8 +18,12 @@ function onRequest(request, response) {
 
 io.sockets.on('connection', function (socket) {
 	//when a client connects
+	clients.push(socket);
 	socket.on('clientMessage', function (clientData) {
 		//emit the message back to the client
-		socket.emit('serverMessage', {data: clientData.data});
+		for(var x in clients) {
+			clients[x].emit('serverMessage', {data: clientData.data});
+		}
+		// socket.emit('serverMessage', {data: clientData.data});
 	});
 });
