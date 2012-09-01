@@ -31,7 +31,10 @@ io.sockets.on('connection', function (socket) {
 	var room = "default";
 	var client = new Client();
 	client.socket = socket;
-	clients[client.socket.id] = client;
+	client.nick += socket.id.substring(0,7);
+	clients[socket.id] = client;
+
+	socket.emit('nickMessage', {data: client.nick});
 	
 	//the initial message from the client with the current URL
 	socket.on('clientURL', function (clientData) {

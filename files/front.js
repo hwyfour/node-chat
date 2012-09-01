@@ -18,6 +18,10 @@ socket.on('serverMessage', function (data) {
 	writeMsg(data.nick + ": " + data.data);
 });
 
+socket.on('nickMessage', function (data) {
+	userNick.value = data.data;
+});
+
 function userTyping(event) {
 	if(event.keyCode === 13) {
 		//the enter key was pressed, submit the message
@@ -31,10 +35,12 @@ function userTyping(event) {
 function nickTyping(event) {
 	if(event.keyCode === 13) {
 		//the enter key was pressed, submit the message
-		var nick = userNick.value;
-		socket.emit('clientNick', {data: nick});
-		//lock the input
-		userNick.disabled = true;
+		if(userNick.value != "") {
+			var nick = userNick.value;
+			socket.emit('clientNick', {data: nick});
+			//lock the input
+			userNick.disabled = true;
+		}
 	}
 }
 
