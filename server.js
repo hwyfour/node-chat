@@ -4,9 +4,14 @@ var nostat				= require('node-static');
 var parser				= require('url');
 var file				= new nostat.Server('./files', { cache: 0 });
 var clients 			= {};
-var roomAssociations	= {};
 
 app.listen(80);
+
+function Client() {
+	this.socket = undefined;
+	this.room = "default";
+	this.nick = "Anonymous";
+}
 
 /* Handles any http request that comes down the line. */
 function onRequest(request, response) {
@@ -24,7 +29,9 @@ function onRequest(request, response) {
 io.sockets.on('connection', function (socket) {
 	//when a client connects, push it onto stack of connected clients
 	var room = "default";
-	clients[socket.id] = socket;
+	var client = new Client();
+	client.socket = socket;
+	clients[client.socket.id] = client;
 	
 	//the initial message from the client with the current URL
 	socket.on('clientURL', function (clientData) {
@@ -32,21 +39,20 @@ io.sockets.on('connection', function (socket) {
 		if(query != undefined) {
 			room = query;
 		}
-		roomAssociations[socket.id] = room;
+		client.room = room;
 	});
 
 	//the server receives a message from any client
 	socket.on('clientMessage', function (clientData) {
 		//emit the message back to every client in the same room
 		for(var x in clients) {
-			if(roomAssociations[clients[x].id] === room) {
-				clients[x].emit('serverMessage', {data: clientData.data});
+			if(clients[x].room === room) {
+				clients[x].socket.emit('serverMessage', {data: clientData.data});
 			}
 		}
 	});
 
 	socket.on('disconnect', function () {
 		delete clients[socket.id];
-		delete roomAssociations[socket.id];
 	});
 });
