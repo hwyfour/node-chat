@@ -9,6 +9,7 @@ function writeMsg(message) {
 }
 
 socket.on('connect', function () {
+	socket.emit('clientURL', {data: document.URL});
 	writeMsg("Connected");
 });
 
