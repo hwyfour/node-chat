@@ -56,6 +56,28 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 
+	//the server receives a typing notification from a client
+	socket.on('clientTyping', function (clientData) {
+		var senderNick = clients[socket.id].nick;
+		//emit the message back to every client in the same room
+		for(var x in clients) {
+			if(clients[x].room === room && clients[x].nick != senderNick) {
+				clients[x].socket.emit('typingMessage', {nick: senderNick});
+			}
+		}
+	});
+
+	//the server receives a cease typing notification from a client
+	socket.on('clientNotTyping', function (clientData) {
+		var senderNick = clients[socket.id].nick;
+		//emit the message back to every client in the same room
+		for(var x in clients) {
+			if(clients[x].room === room && clients[x].nick != senderNick) {
+				clients[x].socket.emit('stopTypingMessage', {nick: senderNick});
+			}
+		}
+	});
+
 	//the server receives a nickname from a client
 	socket.on('clientNick', function (clientData) {
 		clients[socket.id].nick = clientData.data;

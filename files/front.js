@@ -1,7 +1,9 @@
 var socket = io.connect('http://192.168.1.221');
 var output;
+var info;
 var userMsg;
 var userNick;
+var currentlyTyping = false;
 
 function writeMsg(message) {
 	var pre = document.createElement("p");
@@ -9,9 +11,27 @@ function writeMsg(message) {
 	output.appendChild(pre);
 }
 
+function writeInfo(message) {
+	var pre = document.createElement("p");
+	pre.innerHTML = message;
+	info.appendChild(pre);
+}
+
+function writeTyping(nick) {
+	var pre = document.createElement("p");
+	pre.innerHTML = nick + " is currently typing.";
+	pre.id = nick;
+	info.appendChild(pre);
+}
+
+function stopTyping(nick) {
+	var pre = document.getElementById(nick);
+	info.removeChild(pre);
+}
+
 socket.on('connect', function () {
 	socket.emit('clientURL', {data: document.URL});
-	writeMsg("Connected");
+	writeInfo("Connected");
 });
 
 socket.on('serverMessage', function (data) {
@@ -19,24 +39,48 @@ socket.on('serverMessage', function (data) {
 });
 
 socket.on('nickMessage', function (data) {
-	userNick.value = data.data;
+	userNick.placeholder = data.data;
 });
 
-function userTyping(event) {
+socket.on('typingMessage', function (data) {
+	writeTyping(data.nick);
+});
+
+socket.on('stopTypingMessage', function (data) {
+	stopTyping(data.nick);
+});
+
+function userInput(event) {
 	if(event.keyCode === 13) {
 		//the enter key was pressed, submit the message
 		var msg = userMsg.value;
-		socket.emit('clientMessage', {data: msg});
-		//clear the input for re-use
-		userMsg.value = "";
+		if(msg != "") {
+			socket.emit('clientMessage', {data: msg});
+			//clear the input for re-use
+			userMsg.value = "";
+			currentlyTyping = false;
+			socket.emit('clientNotTyping', {data: 0});
+		}
 	}
 }
 
-function nickTyping(event) {
+function userTyping(event) {
+	if(userMsg.value != "") {
+		if(!currentlyTyping) {
+			currentlyTyping = true;
+			socket.emit('clientTyping', {data: 0});
+		}
+	} else {
+		currentlyTyping = false;
+		socket.emit('clientNotTyping', {data: 0});
+	}
+}
+
+function nickInput(event) {
 	if(event.keyCode === 13) {
 		//the enter key was pressed, submit the message
-		if(userNick.value != "") {
-			var nick = userNick.value;
+		var nick = userNick.value;
+		if(nick != "") {
 			socket.emit('clientNick', {data: nick});
 			//lock the input
 			userNick.disabled = true;
@@ -46,8 +90,10 @@ function nickTyping(event) {
 
 window.onload = function () {
 	output = document.getElementById("screen");
+	info = document.getElementById("information");
 	userMsg = document.getElementById("userMsg");
 	userNick = document.getElementById("userNick");
-	userMsg.addEventListener("keydown", userTyping, false);
-	userNick.addEventListener("keydown", nickTyping, false);
+	userMsg.addEventListener("keydown", userInput, false);
+	userMsg.addEventListener("input", userTyping, false);
+	userNick.addEventListener("keydown", nickInput, false);
 };
