@@ -42,14 +42,20 @@ io.sockets.on('connection', function (socket) {
 		client.room = room;
 	});
 
-	//the server receives a message from any client
+	//the server receives a message from a client
 	socket.on('clientMessage', function (clientData) {
+		var senderNick = clients[socket.id].nick;
 		//emit the message back to every client in the same room
 		for(var x in clients) {
 			if(clients[x].room === room) {
-				clients[x].socket.emit('serverMessage', {data: clientData.data});
+				clients[x].socket.emit('serverMessage', {data: clientData.data, nick: senderNick});
 			}
 		}
+	});
+
+	//the server receives a nickname from a client
+	socket.on('clientNick', function (clientData) {
+		clients[socket.id].nick = clientData.data;
 	});
 
 	socket.on('disconnect', function () {

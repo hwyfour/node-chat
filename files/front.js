@@ -1,6 +1,7 @@
 var socket = io.connect('http://192.168.1.221');
 var output;
 var userMsg;
+var userNick;
 
 function writeMsg(message) {
 	var pre = document.createElement("p");
@@ -14,7 +15,7 @@ socket.on('connect', function () {
 });
 
 socket.on('serverMessage', function (data) {
-	writeMsg(data.data);
+	writeMsg(data.nick + ": " + data.data);
 });
 
 function userTyping(event) {
@@ -27,8 +28,20 @@ function userTyping(event) {
 	}
 }
 
+function nickTyping(event) {
+	if(event.keyCode === 13) {
+		//the enter key was pressed, submit the message
+		var nick = userNick.value;
+		socket.emit('clientNick', {data: nick});
+		//lock the input
+		userNick.disabled = true;
+	}
+}
+
 window.onload = function () {
 	output = document.getElementById("screen");
 	userMsg = document.getElementById("userMsg");
+	userNick = document.getElementById("userNick");
 	userMsg.addEventListener("keydown", userTyping, false);
+	userNick.addEventListener("keydown", nickTyping, false);
 };
