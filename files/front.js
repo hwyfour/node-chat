@@ -1,6 +1,5 @@
 var socket = io.connect('http://192.168.1.221');
 var output;
-var info;
 var userMsg;
 var userNick;
 var currentlyTyping = false;
@@ -8,13 +7,18 @@ var currentlyTyping = false;
 function writeMsg(nick, timestamp, message) {
 	var pre = document.createElement("p");
 	pre.innerHTML = timestamp + " " + nick + ": " + message;
-	output.appendChild(pre);
+	var red = document.createElement("div");
+	red.className = "message";
+	red.id = timestamp;
+	red.appendChild(pre);
+	output.appendChild(red);
+	document.location.hash = timestamp;
 }
 
-function writeInfo(message) {
-	var pre = document.createElement("p");
-	pre.innerHTML = message;
-	info.appendChild(pre);
+function writeConnect() {
+	var temp = document.getElementById("status");
+	temp.className = "connected";
+	temp.firstChild.innerHTML = "Connected";
 }
 
 function writeTyping(nick) {
@@ -31,7 +35,7 @@ function stopTyping(nick) {
 
 socket.on('connect', function () {
 	socket.emit('clientURL', {data: document.URL});
-	writeInfo("Connected");
+	writeConnect();
 });
 
 socket.on('serverMessage', function (data) {
@@ -90,7 +94,6 @@ function nickInput(event) {
 
 window.onload = function () {
 	output = document.getElementById("screen");
-	info = document.getElementById("information");
 	userMsg = document.getElementById("userMsg");
 	userNick = document.getElementById("userNick");
 	userMsg.addEventListener("keydown", userInput, false);

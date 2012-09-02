@@ -2,15 +2,26 @@
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
-	<title></title>
+	<title>node-chat</title>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="front.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css" />
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
 </head>
 <body>
-	<input id="userNick" placeholder="Input a nickname">
-	<input id="userMsg" placeholder="Input a message">
-	<div id="information"></div>
-	<div id="screen"></div>
+	<div id="rooms">
+		<div id="info"><p>All Rooms</p></div>
+		<a href=""><article class="selected"><span>Default</span></article></a>
+		<a href=""><article><span>Disconnected</span></article></a>
+		<a href=""><article><span>Discodfdgdfgnnected</span></article></a>
+	</div>
+	<div id="write">
+		<div id="controls">
+			<input class="text" id="userNick" maxlength="15" placeholder="Input a nickname" />
+			<input class="text" id="userMsg" placeholder="Input a message" />
+			<div id="status" class="disconnected"><p>Disconnected</p></div>
+		</div>
+		<div id="screen"></div>
+	</div>
 </body>
 </html>
