@@ -96,6 +96,8 @@ window.onload = function () {
 	output = document.getElementById("screen");
 	userMsg = document.getElementById("userMsg");
 	userNick = document.getElementById("userNick");
+	var width = document.getElementById("rooms").clientWidth;
+	document.getElementById('write').style.paddingLeft = width + 40 + "px";
 	userMsg.addEventListener("keydown", userInput, false);
 	userMsg.addEventListener("input", userTyping, false);
 	userNick.addEventListener("keydown", nickInput, false);
