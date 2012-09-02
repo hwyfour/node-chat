@@ -24,13 +24,16 @@ function writeConnect() {
 function writeTyping(nick) {
 	var pre = document.createElement("p");
 	pre.innerHTML = nick + " is currently typing.";
-	pre.id = nick;
-	info.appendChild(pre);
+	var red = document.createElement("div");
+	red.className = "message";
+	red.id = nick;
+	red.appendChild(pre);
+	output.appendChild(red);
 }
 
 function stopTyping(nick) {
 	var pre = document.getElementById(nick);
-	info.removeChild(pre);
+	output.removeChild(pre);
 }
 
 socket.on('connect', function () {
