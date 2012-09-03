@@ -4,15 +4,17 @@ var userMsg;
 var userNick;
 var currentlyTyping = false;
 
-function writeMsg(nick, timestamp, message) {
+function writeMsg(data) {
 	var pre = document.createElement("p");
-	pre.innerHTML = timestamp + " " + nick + ": " + message;
+	pre.innerHTML = data.data.timeStamp + " " + data.data.nick + ": " + data.data.msg;
 	var red = document.createElement("div");
 	red.className = "message";
-	red.id = timestamp;
+	red.id = data.data.id;
 	red.appendChild(pre);
 	output.appendChild(red);
-	document.location.hash = timestamp;
+
+	//a fix to keep the page scrolled to the bottom
+	window.scrollTo(0, document.getElementById("write").clientHeight + 5000);
 }
 
 function writeConnect() {
@@ -29,6 +31,9 @@ function writeTyping(nick) {
 	red.id = nick;
 	red.appendChild(pre);
 	output.appendChild(red);
+
+	//a fix to keep the page scrolled to the bottom
+	window.scrollTo(0, document.getElementById("write").clientHeight + 5000);
 }
 
 function stopTyping(nick) {
@@ -42,7 +47,7 @@ socket.on('connect', function () {
 });
 
 socket.on('serverMessage', function (data) {
-	writeMsg(data.data.nick, data.data.timeStamp, data.data.msg);
+	writeMsg(data);
 });
 
 socket.on('nickMessage', function (data) {

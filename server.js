@@ -12,7 +12,7 @@ app.listen(80);
 function Client() {
 	this.socket = undefined;
 	this.room = "default";
-	this.nick = "Anonymous";
+	this.nick = "Anon";
 }
 
 function Message() {
