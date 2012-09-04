@@ -411,7 +411,7 @@ a {
 
 a:hover article {
 	-webkit-transform: perspective(300px) rotateX(180deg);
-	-webkit-transition: -webkit-transform 0.2s linear, background-color 0s linear 0.1s;
+	-webkit-transition: -webkit-transform 0.2s linear, background-color 0s linear 0.1s, opacity 0s linear 0.1s;
 	background-color: #3B5998;
 }
 
@@ -422,11 +422,20 @@ article {
 	box-shadow: 0 0 6px -2px black, 0 0 45px -20px black;
 	color: #fff;
 	-webkit-transform: perspective(300px) rotateX(0deg);
-	-webkit-transition: -webkit-transform 0.2s linear, background-color 0s linear 0.1s;
+	-webkit-transition: -webkit-transform 0.2s linear, background-color 0s linear 0.1s, opacity 0s linear 0.1s;
 }
 
 .selected {
 	background-color: #3E7B3E;
+}
+
+.add {
+	opacity: 0.2;
+}
+
+a:hover .add {
+	background-color: #A62000;
+	opacity: 1;
 }
 
 a:hover span {
