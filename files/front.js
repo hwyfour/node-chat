@@ -22,7 +22,7 @@
  *
  */
 
-var socket = io.connect('http://192.168.1.221');
+var socket = io.connect('216.19.181.111');
 var output;
 var userMsg;
 var userNick;
@@ -30,11 +30,28 @@ var roomPanel;
 var currentRoom;
 var currentlyTyping = false;	//flag to control when a 'currently typing' message is emitted
 
+window.onload = function () {
+	roomPanel = document.getElementById("rooms");
+	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
+};
+
 /* When a client first connects, we send the current URL
  * back to the server to be used as the current chatroom.
  * We also update the status icon to show that we are connected.
+ * All code up to and including the socket.emit was moved here from
+ * window.onload to accomodate for timing issues where socket functions
+ * were being called before the DOM had fully loaded
  */
 socket.on('connect', function () {
+	output = document.getElementById("screen");
+	userMsg = document.getElementById("userMsg");
+	userNick = document.getElementById("userNick");
+	roomPanel = document.getElementById("rooms");
+	//push the chat panel to the right so it clears the room list.
+	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
+	userMsg.addEventListener("keydown", userInput, false);
+	userMsg.addEventListener("input", userTyping, false);
+	userNick.addEventListener("keydown", nickInput, false);
 	socket.emit('clientURL', {data: document.URL});
 	var temp = document.getElementById("status");
 	temp.className = "connected";
@@ -74,19 +91,16 @@ socket.on('chatMessage', function (data) {
  */
 socket.on('roomAdd', function (data) {
 	var query = data.data;
+	var pre = document.createElement("span");
+	var red = document.createElement("article");
+	var out = document.createElement("a");
 	//if this is the default room, apply the correct styling
 	if (query === "") {
-		var pre = document.createElement("span");
 		pre.innerHTML = "Default";
-		var red = document.createElement("article");
-		var out = document.createElement("a");
 		out.href = "/";
 		out.id = "room-" + query;
 	} else {
-		var pre = document.createElement("span");
 		pre.innerHTML = query.split("%20").join("&nbsp;");
-		var red = document.createElement("article");
-		var out = document.createElement("a");
 		out.href = "?" + query;
 		out.id = "room-" + query;
 	}
@@ -94,10 +108,15 @@ socket.on('roomAdd', function (data) {
 	if (query === currentRoom) {
 		red.className = "selected";
 	}
+	var id = out.id;
 	red.appendChild(pre);
 	out.appendChild(red);
 	var last = document.getElementById("addition");
+	out.style.display = "none";
 	roomPanel.insertBefore(out, last);
+	document.getElementById(id).getAttribute("style");		//Render fix
+	document.getElementById(id).removeAttribute("style");	//Render fix
+	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
 });
 
 /* This function is called when the server responds that the user
@@ -143,6 +162,7 @@ socket.on('stopTypingMessage', function (data) {
 socket.on('roomDel', function (data) {
 	var pre = document.getElementById("room-" + data.data);
 	roomPanel.removeChild(pre);
+	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
 });
 
 /* When a client joins the room, we receive this message.
@@ -158,6 +178,7 @@ socket.on('clientJoin', function (data) {
 
 	//a fix to keep the page scrolled to the bottom
 	window.scrollTo(0, document.getElementById("write").clientHeight + 5000);
+	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
 });
 
 /* When a client leaves the room, we receive this message.
@@ -197,7 +218,7 @@ socket.on('otherNickChange', function (data) {
 function userInput(event) {
 	if (event.keyCode === 13) {
 		//the enter key was pressed, submit the message
-		var msg = userMsg.value;
+		var msg = userMsg.value.replace(/<\/?[^>]+(>|$)/g, "");
 		if (msg !== "") {
 			socket.emit('clientMessage', {data: msg});
 			//clear the input for re-use
@@ -233,7 +254,7 @@ function userTyping(event) {
 function nickInput(event) {
 	if (event.keyCode === 13) {
 		//the enter key was pressed, submit the message
-		var nick = userNick.value;
+		var nick = userNick.value.replace(/<\/?[^>]+(>|$)/g, "");
 		if (nick !== "") {
 			socket.emit('clientNick', {data: nick});
 			//lock the input
@@ -241,15 +262,3 @@ function nickInput(event) {
 		}
 	}
 }
-
-window.onload = function () {
-	output = document.getElementById("screen");
-	userMsg = document.getElementById("userMsg");
-	userNick = document.getElementById("userNick");
-	roomPanel = document.getElementById("rooms");
-	//push the chat panel to the right so it clears the room list.
-	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
-	userMsg.addEventListener("keydown", userInput, false);
-	userMsg.addEventListener("input", userTyping, false);
-	userNick.addEventListener("keydown", nickInput, false);
-};

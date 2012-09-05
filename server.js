@@ -86,6 +86,9 @@ io.sockets.on('connection', function (socket) {
 	socket.on('clientURL', function (clientData) {
 		//parse the client's URL query
 		var query = parser.parse(clientData.data).query;
+		if (query !== undefined) {
+			query = query.replace(/<\/?[^>]+(>|$)/g, "");
+		}
 		//return to the client what room they are in
 		socket.emit('roomInfo', {data: query});
 		//write a list of current rooms out to the client

@@ -385,13 +385,13 @@ html, body {
 	padding: 0px;
 	height: 100%;
 	min-height: 100%;
-	width: 100%;
 	background: url(bg.jpg);
 	font-family: 'Open Sans', sans-serif;
 }
 
 #hold {
 	position: fixed;
+	width: 2000px;
 }
 
 #rooms {
