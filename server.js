@@ -138,7 +138,7 @@ io.sockets.on('connection', function (socket) {
 		msg.id = msgCount++;
 		msg.nick = clients[currentSockID].nick;
 		msg.timeStamp = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
-		msg.msg = clientData.data;
+		msg.msg = clientData.data.replace(/<\/?[^>]+(>|$)/g, "");
 		msg.room = clients[currentSockID].room;
 		messages[msg.id] = msg;
 		//emit the message back to every client in the same room
