@@ -554,8 +554,47 @@ span {
 	text-shadow: 0 0 5px #3ED636;
 }
 
-#screen {
-	
+.alert {
+	font-size: 20px;
+	text-align: left;
+	min-height: 40px;
+	max-width: 816px;
+	padding: 0px 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	float: left;
+	clear: both;
+	box-shadow: 0 0 6px -2px black, 0 0 45px -20px black;
+}
+
+.alert p {
+	line-height: 40px;
+	word-wrap: break-word;
+	margin: 0px;
+}
+
+.blue {
+	color: #fff;
+	background-color: #3B5998;
+	text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.green {
+	color: #fff;
+	background-color: #3E7B3E;
+	text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.red {
+	color: #333;
+	background-color: #FFF37B;
+	text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.orange {
+	color: #fff;
+	background-color: #A62000;
+	text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
 .message {

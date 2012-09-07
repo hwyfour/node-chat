@@ -137,7 +137,7 @@ socket.on('typingMessage', function (data) {
 	var pre = document.createElement("p");
 	pre.innerHTML = data.nick + " is currently typing.";
 	var red = document.createElement("div");
-	red.className = "message";
+	red.className = "alert red";
 	red.id = data.nick;
 	red.appendChild(pre);
 	output.appendChild(red);
@@ -172,7 +172,7 @@ socket.on('clientJoin', function (data) {
 	var pre = document.createElement("p");
 	pre.innerHTML = data.nick + " has joined the room";
 	var red = document.createElement("div");
-	red.className = "message";
+	red.className = "alert green";
 	red.appendChild(pre);
 	output.appendChild(red);
 
@@ -188,7 +188,7 @@ socket.on('clientLeave', function (data) {
 	var pre = document.createElement("p");
 	pre.innerHTML = data.nick + " has left the room";
 	var red = document.createElement("div");
-	red.className = "message";
+	red.className = "alert orange";
 	red.appendChild(pre);
 	output.appendChild(red);
 
@@ -203,7 +203,7 @@ socket.on('otherNickChange', function (data) {
 	var pre = document.createElement("p");
 	pre.innerHTML = data.old + " is now known as " + data.changed;
 	var red = document.createElement("div");
-	red.className = "message";
+	red.className = "alert blue";
 	red.appendChild(pre);
 	output.appendChild(red);
 
