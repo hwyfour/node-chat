@@ -8,9 +8,9 @@ var rooms		= {};
 var messages	= {};
 var msgCount	= 0;
 
-app.listen(80);
+app.listen(80);				//The port that both the socket server and file server listen on
 
-rooms["Default"] = "";
+rooms["Default"] = "";		//Rooms are stored as 'room name' : 'query string'
 
 function Client() {
 	this.socket = undefined;
@@ -26,8 +26,10 @@ function Message() {
 	this.room = "";
 }
 
-/* Handles any http request that comes down the line. */
+/* Handles any http request that comes down the line.
+ */
 function onRequest(request, response) {
+	//if there is no query, we serve the root '/'
 	if (parser.parse(request.url).query !== undefined) {
 		request.url = "/";
 	}
@@ -153,9 +155,9 @@ io.sockets.on('connection', function (socket) {
 	 */
 	socket.on('clientTyping', function (clientData) {
 		var senderNick = clients[currentSockID].nick;
-		//emit the message back to every client in the same room
+		//emit the message back to every other client in the same room
 		for (var x in clients) {
-			if (clients[x].room === currentRoom && clients[x].nick !== senderNick) {
+			if (clients[x].room === currentRoom && clients[x].socket.id !== socket.id) {
 				clients[x].socket.emit('typingMessage', {nick: senderNick});
 			}
 		}
@@ -165,9 +167,9 @@ io.sockets.on('connection', function (socket) {
 	 */
 	socket.on('clientNotTyping', function (clientData) {
 		var senderNick = clients[currentSockID].nick;
-		//emit the message back to every client in the same room
+		//emit the message back to every other client in the same room
 		for (var x in clients) {
-			if (clients[x].room === currentRoom && clients[x].nick !== senderNick) {
+			if (clients[x].room === currentRoom && clients[x].socket.id !== socket.id) {
 				clients[x].socket.emit('stopTypingMessage', {nick: senderNick});
 			}
 		}

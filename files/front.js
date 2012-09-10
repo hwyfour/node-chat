@@ -59,6 +59,7 @@ socket.on('connect', function () {
 });
 
 /* When a client sends its URL, it is returned this value which is its current room
+ * as known by the server.
  */
 socket.on('roomInfo', function (data) {
 	currentRoom = data.data;
@@ -119,9 +120,21 @@ socket.on('roomAdd', function (data) {
 	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
 });
 
+/* Remove a room from the list of active rooms. This function is called
+ * when the server alerts us that a room is empty.
+ */
+socket.on('roomDel', function (data) {
+	var pre = document.getElementById("room-" + data.data);
+	roomPanel.removeChild(pre);
+	//resize the chat panel so it displays with the proper padding against the room panel.
+	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
+});
+
 /* This function is called when the server responds that the user
  * has changed their nickname. The function serves as an affirmative
  * response that the nickname has been changed successfully on the server.
+ * To visualize that the server has indeed assigned a nickname to the client,
+ * the nickname placeholder is updated with this new nickname.
  */
 socket.on('nickMessage', function (data) {
 	userNick.placeholder = data.data;
@@ -135,7 +148,7 @@ socket.on('nickMessage', function (data) {
  */
 socket.on('typingMessage', function (data) {
 	var pre = document.createElement("p");
-	pre.innerHTML = data.nick + " is currently typing.";
+	pre.innerHTML = data.nick + " is currently typing";
 	var red = document.createElement("div");
 	red.className = "alert red";
 	red.id = data.nick;
@@ -156,15 +169,6 @@ socket.on('stopTypingMessage', function (data) {
 	output.removeChild(pre);
 });
 
-/* Remove a room from the list of active rooms. This function is called
- * when the server alerts us that a room is empty.
- */
-socket.on('roomDel', function (data) {
-	var pre = document.getElementById("room-" + data.data);
-	roomPanel.removeChild(pre);
-	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
-});
-
 /* When a client joins the room, we receive this message.
  * Just like a 'currently typing' message, we write this to the chat panel.
  */
@@ -178,7 +182,6 @@ socket.on('clientJoin', function (data) {
 
 	//a fix to keep the page scrolled to the bottom
 	window.scrollTo(0, document.getElementById("write").clientHeight + 5000);
-	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
 });
 
 /* When a client leaves the room, we receive this message.
@@ -248,7 +251,7 @@ function userTyping(event) {
 }
 
 /* When a user presses enter in the nickname box, we run this code.
- * If the box isn't empty, we send te nickname to the server and
+ * If the box isn't empty, we send the nickname to the server and
  * lock the nickname box so the user can't change their new nickname.
  */
 function nickInput(event) {
