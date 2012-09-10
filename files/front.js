@@ -150,7 +150,7 @@ socket.on('typingMessage', function (data) {
 	var pre = document.createElement("p");
 	pre.innerHTML = data.nick + " is currently typing";
 	var red = document.createElement("div");
-	red.className = "alert red";
+	red.className = "alert yellow";
 	red.id = data.nick;
 	red.appendChild(pre);
 	output.appendChild(red);
