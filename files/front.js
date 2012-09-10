@@ -31,6 +31,9 @@ var currentRoom;
 var currentlyTyping = false;	//flag to control when a 'currently typing' message is emitted
 
 window.onload = function () {
+	/* in the rare case where the DOM loads before the socket connects, this
+	 * keeps the chat panel spaced properly before the list of rooms loads.
+	 */
 	roomPanel = document.getElementById("rooms");
 	document.getElementById('write').style.paddingLeft = roomPanel.clientWidth + 40 + "px";
 };
